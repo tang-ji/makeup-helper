@@ -87,7 +87,7 @@ def drawImage(image, ax=None):
         ax: A matplotlib axis on which to draw.
     """
     if ax is None:
-        _, ax = plt.subplots(figsize=(6,6), dpi=100)
+        _, ax = plt.subplots(figsize=(8,8), dpi=80)
     ax.imshow(image)
     ax.set_yticks([])
     ax.set_xticks([])
@@ -140,7 +140,7 @@ def drawAnnotations(image, predictions, ax=None):
         ax: A matplotlib axis on which to draw.
     """
     if ax is None:
-        _, ax = plt.subplots()
+        _, ax = plt.subplots(figsize=(8,8), dpi=80)
     ax.imshow(drawBoxes(image=image, boxes=predictions, boxes_format='predictions'))
     predictions = sorted(predictions, key=lambda p: p[1][:, 1].min())
     left = []
