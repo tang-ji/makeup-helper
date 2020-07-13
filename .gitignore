@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 aligned_images/
+private_test/
 *.py[cod]
 *$py.class
 

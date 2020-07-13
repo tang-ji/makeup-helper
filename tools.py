@@ -3,6 +3,7 @@ import bz2
 import numpy as np
 from keras.utils import get_file
 from landmarks_detector import LandmarksDetector
+from face_alignment import image_align
 
 import matplotlib.pyplot as plt
 import cv2
@@ -18,6 +19,7 @@ def unpack_bz2(src_path):
 
 landmarks_model_path = unpack_bz2(get_file('shape_predictor_68_face_landmarks.dat.bz2',
                                                LANDMARKS_MODEL_URL, cache_subdir='temp'))
+landmarks_detector = LandmarksDetector(landmarks_model_path)
 
 def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scale=1, em_scale=0.1, use_alpha=False):
     RAW_IMAGES_DIR = raw_dir
@@ -27,7 +29,6 @@ def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scal
     except:
         pass
 
-    landmarks_detector = LandmarksDetector(landmarks_model_path)
     for img_name in os.listdir(RAW_IMAGES_DIR):
         try:
             raw_img_path = os.path.join(RAW_IMAGES_DIR, img_name)
@@ -43,9 +44,14 @@ def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scal
         except:
             pass
 
-def get_landmarks(raw_dir):
+def get_landmarks_img(raw_img_path):
+    preds = {}
+    detector = landmarks_detector.get_landmarks(raw_img_path)
+    preds[raw_img_path] = np.array(next(detector))
+    return preds
+
+def get_landmarks_path(raw_dir):
     RAW_IMAGES_DIR = raw_dir
-    landmarks_detector = LandmarksDetector(landmarks_model_path)
     preds = {}
     for img_name in os.listdir(RAW_IMAGES_DIR):
         try:
@@ -58,7 +64,7 @@ def get_landmarks(raw_dir):
     return preds
 
 def get_draw_prediction_directory(path):
-    preds = get_landmarks(path)
+    preds = get_landmarks_path(path)
     for img in preds:
         _, ax = plt.subplots(figsize=(5,5), dpi=80)
         im = plt.imread(img)
