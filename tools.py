@@ -2,7 +2,6 @@ import os
 import bz2
 import numpy as np
 from keras.utils import get_file
-from face_alignment import image_align
 from landmarks_detector import LandmarksDetector
 
 import matplotlib.pyplot as plt
