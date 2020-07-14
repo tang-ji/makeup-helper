@@ -85,6 +85,21 @@ def get_boxes(points):
     x_max, x_min, y_max, y_min = get_bound(points)
     return np.array([[x_min,y_min], [x_max,y_min], [x_max,y_max], [x_min, y_max]])
 
+def get_features(landmarks):
+    predictions = []
+    predictions.append(("left eyebrow", get_boxes(landmarks[17:22])))
+    predictions.append(("right eyebrow", get_boxes(landmarks[22:27])))
+    predictions.append(("nose", get_boxes(np.append(landmarks[27:31], [landmarks[39], landmarks[42]], axis=0))))
+    predictions.append(("nostrils", get_boxes(landmarks[31:36])))
+    predictions.append(("left eye", get_boxes(landmarks[36:42])))
+    predictions.append(("right eye", get_boxes(landmarks[42:48])))
+    predictions.append(("upper lip", get_boxes(landmarks[48:55])))
+    predictions.append(("lower lip", get_boxes(np.append(landmarks[54:60], [landmarks[48]], axis=0))))
+    predictions.append(("left jaw", get_boxes(np.append(landmarks[1:6], [landmarks[48]], axis=0))))
+    predictions.append(("right jaw", get_boxes(np.append(landmarks[11:16], [landmarks[54]], axis=0))))
+    predictions.append(("chin", get_boxes(landmarks[5:12])))
+    return predictions
+
 def drawImage(image, ax=None):
     """Draw image.
 
