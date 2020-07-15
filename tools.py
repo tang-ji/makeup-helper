@@ -2,8 +2,8 @@ import os
 import bz2
 import numpy as np
 from keras.utils import get_file
-from landmarks_detector import LandmarksDetector
-from face_alignment import image_align
+from face_alignment.landmarks_detector import LandmarksDetector
+from face_alignment.face_alignment import image_align
 
 import matplotlib.pyplot as plt
 import cv2
@@ -31,6 +31,8 @@ def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scal
 
     for img_name in os.listdir(RAW_IMAGES_DIR):
         try:
+            if img_name.split(".")[-1].lower() not in ["png", "jpg", "jpeg"]:
+                continue
             raw_img_path = os.path.join(RAW_IMAGES_DIR, img_name)
             fn = face_img_name = '%s.png' % (os.path.splitext(img_name)[0])
             for i, face_landmarks in enumerate(landmarks_detector.get_landmarks(raw_img_path), start=1):
@@ -55,6 +57,8 @@ def get_landmarks_path(raw_dir):
     preds = {}
     for img_name in os.listdir(RAW_IMAGES_DIR):
         try:
+            if img_name.split(".")[-1].lower() not in ["png", "jpg", "jpeg"]:
+                continue
             raw_img_path = os.path.join(RAW_IMAGES_DIR, img_name)
             for i, face_landmarks in enumerate(landmarks_detector.get_landmarks(raw_img_path), start=1):
                 preds[raw_img_path] = np.array(face_landmarks)
