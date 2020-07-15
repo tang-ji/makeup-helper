@@ -2,6 +2,8 @@
 __pycache__/
 aligned_images/
 private_test/
+downloaded/
+model/
 *.py[cod]
 *$py.class
 

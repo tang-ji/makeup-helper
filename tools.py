@@ -21,7 +21,7 @@ landmarks_model_path = unpack_bz2(get_file('shape_predictor_68_face_landmarks.da
                                                LANDMARKS_MODEL_URL, cache_subdir='temp'))
 landmarks_detector = LandmarksDetector(landmarks_model_path)
 
-def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scale=1, em_scale=0.1, use_alpha=False):
+def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scale=1, em_scale=0.1, use_alpha=False, verbose=True):
     RAW_IMAGES_DIR = raw_dir
     ALIGNED_IMAGES_DIR = aligned_dir
     try:
@@ -40,7 +40,8 @@ def get_aligned_images(raw_dir, aligned_dir, output_size=1024, x_scale=1, y_scal
                     face_img_name = '%s.png' % (os.path.splitext(img_name)[0])
                     aligned_face_path = os.path.join(ALIGNED_IMAGES_DIR, face_img_name)
                     image_align(raw_img_path, aligned_face_path, face_landmarks, output_size=output_size, x_scale=x_scale, y_scale=y_scale, em_scale=em_scale, alpha=use_alpha)
-                    print('Wrote result %s' % aligned_face_path)
+                    if verbose:
+                        print('Wrote result %s' % aligned_face_path)
                 except:
                     pass
         except:
