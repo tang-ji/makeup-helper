@@ -29,7 +29,7 @@ class beautyGAN:
         no_makeup = cv2.resize(imread(input_img), (self.img_size, self.img_size))
         X_img = np.expand_dims(preprocess(no_makeup), 0)
         makeups = glob.glob(os.path.join(makeups_path, '*.png'))
-        makeups = np.random.choice(makeups, n)
+        makeups = np.random.choice(makeups, n, replace=False)
         result = np.ones((2 * self.img_size, (len(makeups) + 1) * self.img_size, 3))
         result[self.img_size: 2 * self.img_size, :self.img_size] = no_makeup / 255.
         for i in range(len(makeups)):
