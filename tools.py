@@ -1,14 +1,60 @@
-import os
+import os, requests, time, shutil
 import bz2
 import numpy as np
-from keras.utils import get_file
-from face_alignment.landmarks_detector import LandmarksDetector
-from face_alignment.face_alignment import image_align
-
 import matplotlib.pyplot as plt
 import cv2
 
+from keras.utils import get_file
+from multiprocessing.dummy import Pool
+
+from face_alignment.landmarks_detector import LandmarksDetector
+from face_alignment.face_alignment import image_align
+
+
 LANDMARKS_MODEL_URL = 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2'
+azureKey="b2101b2ed9744c51b7dd0c0e7ecad979"
+
+
+
+def search(search_term, azureKey):
+    print('searching using bing: "'+search_term+'"')
+    search_url = "https://api.cognitive.microsoft.com/bing/v7.0/images/search"
+    subscription_key = azureKey
+    assert subscription_key
+    headers = {"Ocp-Apim-Subscription-Key" : subscription_key}
+    params  = {"q": search_term, "imageType": "Photo","count":100}
+    response = requests.get(search_url, headers=headers, params=params)
+    response.raise_for_status()
+    search_results = response.json()
+    result=[]
+    for i in search_results['value']:
+        result.append(i['thumbnailUrl'])
+    return result
+
+
+def download(links_in, dir_name, n=None):
+    links = links_in[:n]
+    print('search results',len(links))
+    if os.path.exists(dir_name):
+        print('using cache')
+        return
+
+    tempName=dir_name+'-'+str(int(time.time()))
+    os.makedirs(tempName)
+    def fetch(url):
+        r=requests.get(url[0], stream=True)
+        with open(tempName+'/'+str(url[1]).zfill(4)+".jpg", 'wb') as out_file:
+            shutil.copyfileobj(r.raw, out_file)
+
+    modLinks=[[links[i],i+1] for i in range(len(links))]
+    Pool(10).map(fetch, modLinks)
+    
+    try:
+        os.rename(tempName,dir_name)
+    except:
+        shutil.rmtree(tempName)
+
+    print('Items downloaded',len(links))
 
 def unpack_bz2(src_path):
     data = bz2.BZ2File(src_path).read()
